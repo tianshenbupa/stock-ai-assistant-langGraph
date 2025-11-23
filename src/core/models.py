@@ -1,7 +1,8 @@
-from pydantic import BaseModel, Field
-from typing import Optional, List, Dict, Any
+from pydantic import BaseModel, Field, field_validator
+from typing import Optional, List, Dict, Any, Union
 from datetime import datetime
 from enum import Enum
+import re
 
 
 class RecommendationType(str, Enum):
@@ -31,8 +32,8 @@ class AnalysisResponse(BaseModel):
     # 最终建议
     recommendation: Optional[str] = None
     score: Optional[float] = Field(None, ge=1, le=10, description="投资评分 1-10")
-    target_price: Optional[float] = None
-    stop_loss: Optional[float] = None
+    target_price: Optional[Union[float, str]] = None  # 修改: 允许字符串
+    stop_loss: Optional[Union[float, str]] = None  # 修改: 允许字符串
 
     # 详细分析
     reasoning: Optional[str] = None
@@ -42,10 +43,68 @@ class AnalysisResponse(BaseModel):
     # 元数据
     execution_time: Optional[float] = None
 
+    # 添加价格解析验证器
+    @field_validator('target_price', 'stop_loss', mode='before')
+    @classmethod
+    def parse_price(cls, v):
+        """
+        智能解析价格字符串
+
+        支持的格式:
+        - 纯数字: 280.5 -> 280.5
+        - 带货币符号: $280 -> 280.0
+        - 中文格式: 255美元 -> 255.0
+        - 价格区间: 270-285美元 -> 277.5 (取平均值)
+        - 无法解析: "无法确定" -> "无法确定"
+
+        Args:
+            v: 输入的价格值
+
+        Returns:
+            float 或 str: 解析后的数字,或原字符串
+        """
+        if v is None:
+            return None
+
+        # 如果已经是数字,直接返回
+        if isinstance(v, (int, float)):
+            return float(v)
+
+        # 如果是字符串,尝试解析
+        if isinstance(v, str):
+            try:
+                # 移除常见的货币符号、单位和空格
+                cleaned = re.sub(
+                    r'[美元$¥€£元人民币港币日元韩元USD HKD CNY JPY KRW\s]',
+                    '',
+                    v
+                )
+
+                # 查找所有数字(包括小数)
+                numbers = re.findall(r'\d+\.?\d*', cleaned)
+
+                if numbers:
+                    # 如果有多个数字(如价格区间"270-285"),取平均值
+                    nums = [float(n) for n in numbers]
+                    result = sum(nums) / len(nums)
+                    return round(result, 2)
+
+                # 如果找不到任何数字,返回原字符串
+                # 这样可以保留类似"无法确定"、"暂无目标价"等描述性文本
+                return v
+
+            except Exception as e:
+                # 解析出错,返回原字符串
+                return v
+
+        return v
+
     class Config:
         json_encoders = {
             datetime: lambda v: v.isoformat()
         }
+        # 允许额外字段,提高兼容性
+        extra = "allow"
 
 
 class RAGQueryRequest(BaseModel):

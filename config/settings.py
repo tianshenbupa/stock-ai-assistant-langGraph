@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     DEEPSEEK_API_BASE: str = "https://api.deepseek.com/v1"
     DEEPSEEK_MODEL: str = "deepseek-chat"
     MODEL_NAME: str = "deepseek-chat"  # 添加这个字段
-    TEMPERATURE: float = 0.7  # 添加这个字段
+    TEMPERATURE: float = 0.3  # 添加这个字段
 
     # ========== RAG 配置 ==========
     VECTOR_STORE_PATH: str = "data/vector_store"

@@ -591,16 +591,18 @@ Error: Out of memory
 
 ## 📧 联系方式
 
-- **作者**: Your Name
-- **邮箱**: your.email@example.com
-- **项目主页**: https://github.com/your-username/stock-ai-assistant
-
+- **作者**: tianshenbupa
+- **邮箱**: lyc7895153@163.com
+- **项目主页**: https://github.com/tianshenbupa/stock-ai-assistant-langGraph
 ---
 
 <div align="center">
 
 **⭐ 如果这个项目对你有帮助，请给个 Star！⭐**
 
-Made with ❤️ by [Your Name]
+Made with ❤️ by tianshenbupa
+
 
 </div>
+
+
