@@ -589,11 +589,9 @@ Error: Out of memory
 
 ---
 
-## 📧 联系方式--求职中！！！有智能体开发的岗位欢迎邮件联系我！！
+## 📧 联系方式--求职中！！！有智能体开发的岗位欢迎联系我！！
 
-- **作者**: tianshenbupa
-- **邮箱**: lyc7895153@163.com
-- **项目主页**: https://github.com/tianshenbupa/stock-ai-assistant-langGraph
+
 ---
 
 <div align="center">
